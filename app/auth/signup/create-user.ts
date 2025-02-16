@@ -1,24 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"user server"
+"use server";
 
-
+import { FormError } from "@/app/common/form-error.interface";
+import { post } from "@/app/util/fetch";
 import { redirect } from "next/navigation";
-import { API_URL } from "../constants/api"
 
-export default async function createUser(
-    _prevState: any,
-    formData: FormData,
-) {
-    const res = await fetch(`${API_URL}/users`, {
-        method: "POST",
-        body: formData
-    })
-
-    const parsedRes = await res.json();
-    if(!res.ok){
-        console.log(parsedRes);
-        return { error: "" }
-        
-    }
-    redirect("/")
+export default async function createUser(_prevState: FormError, formData: FormData) {
+  const { error } = await post("users", formData);
+  if (error) {
+    return { error };
+  }
+  redirect("/");
 }
